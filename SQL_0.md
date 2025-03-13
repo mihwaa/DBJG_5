@@ -1,5 +1,6 @@
 `0주차 내용 정리`  
 
+
 ![Image](https://github.com/user-attachments/assets/fbbe666d-7385-4fe7-a369-236d9c448d8a)
 ```
 1.
@@ -57,3 +58,29 @@ HAVING CATEGORY IN ('과자','국','김치','식용유')
 ORDER BY MAX_PRICE DESC
 ```
 이렇게 한다면 결과는 출력되지만 PRODUCT_NAME을 제대로 출력하지 못하여 오답이 될 수 있다.
+
+또한,
+groupby having where의 사용에 대하여 알아두는 것이 좋다
+groupby는 집계함수고
+having과 where은 필터 역할을 한다.
+이때 그룹화 전 필터링을 원한다면 where을, 그룹화 후 필터링을 하고 싶다면 having을 사용한다.
+하지만 sum, avg 등의 집계 함수를 그룹화 전에 사용하고 싶다면, 서브쿼리나 with절을 사용해야 한다.
+밑은 이에 대한 예시이다.
+
+```
+1. 서브쿼리
+SELECT CATEGORY, SUM(TOTAL_SALES) AS TOTAL_REVENUE
+FROM (
+    SELECT * FROM SALES WHERE ORDER_DATE >= '2024-01-01'  -- 🔹 그룹화 전에 필터링
+) AS filtered_sales
+GROUP BY CATEGORY;
+
+2. with(CTE)
+WITH filtered_sales AS (
+    SELECT * FROM SALES WHERE ORDER_DATE >= '2024-01-01'  -- 🔹 그룹화 전에 필터링
+)
+SELECT CATEGORY, SUM(TOTAL_SALES) AS TOTAL_REVENUE
+FROM filtered_sales
+GROUP BY CATEGORY;
+
+```
