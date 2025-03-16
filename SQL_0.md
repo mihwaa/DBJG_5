@@ -1,6 +1,68 @@
-`0주차 내용 정리`  
+# 0주차 내용 정리  
 
+## 15.2.15. Subqueries
+ 서브쿼리는 select 안에 또다른 select이다.  
+ 서브쿼리의 장점은  각 부분을 독립할 수 있게 해서 복잡한 조인, 유니온보다 읽기 쉽다.  
+ 서브쿼리는 다음의 값들을 반환할 수 있다
+ ```
+스칼라(단일 값)
+행(하나의 행)
+열(하나의 열)
+테이블 (여러 행과 여러 열)
+```
+또한 단순 조회 뿐 아닌 데이터 조작어에도 서브쿼리를 활용할 수 있다.  
 
+## 15.2.15.2 Comparisons Using Subqueries
+
+### 1. 서브쿼리의 일반적인 형태
+```
+비서브쿼리 피연산자 comparison_operator (서브쿼리)
+... WHERE 'a' = (SELECT column1 FROM t1);
+```
+### 2. like 연산자와 서브쿼리 (패턴 일치 검사)
+```
+비서브쿼리 피연산자 LIKE (서브쿼리)
+```
+### 3. 서브쿼리를 활용해야만 하는 경우
+```
+JOIN으로 활용할 수 없는 경우가 있다
+SELECT * FROM t1
+  WHERE column1 = (SELECT MAX(column2) FROM t2);
+이를 JOIN으로 처리하면 다중 행이 반환될 가능성이 생긴다.
+```
+
+ ## 15.2.15.3 Subqueries with ANY, IN, or SOME 
+ 
+ 서브쿼리를 이처럼 활용해 보자.
+```
+피연산자 비교 연산자 ANY (서브쿼리)
+피연산자 IN (서브쿼리)
+피연산자 비교 연산자 SOME (서브쿼리)
+```
+ANY: 서브쿼리에서 반한된 값 중 하나라도 조건을 만족하면 TRUE를 반환한다.  
+서브쿼리와 함께 사용될 때 IN과 ANY는 동일한 의미를 가지지만 IN은 목록을 받고, =ANY는 값 목록을 직접적으로 받아올 수 없다.
+```
+SELECT s1 FROM t1 WHERE s1 IN (1, 2, 3);  -- 가능
+SELECT s1 FROM t1 WHERE s1 = ANY (1, 2, 3); -- 불가능
+```
+SOME 또한 ANY의 엘리아스이다.
+
+ ## 15.2.15.4. Subqueries with ALL
+```
+피연산자 비교 연산자 ALL (서브쿼리)
+```
+ALL은 서브쿼리에서 반환된 모든 값에 대해 비교 연산자가 참이면 TRUE를 반환한다.  
+즉, 하나라도 거짓일 시 FALSE를 반환하게 된다.
+또한, 서브쿼리가 NULL 값을 포함하면, ALL의 연산값이 NULL이 되기도 한다.  
+서브쿼리가 빈 테이블이라면 ALL 비교는 항상 TRUE가 된다.  
+NOT IN은 <>ALL의 엘리아스이다, 하지만 NULL이 포함된 경우 차이가 발생할 수 있다.  
+NOT IN은 앞서 서술했듯 서브쿼리 값에 NULL이 있으면 NULL이 결과값이 된다.
+ 
+ ## 15.2.15.6. Subqueries with EXISTS or NOT EXISTS
+ ## 15.2.15.10. Subquery Errors
+ ## 15.2.20 WITH (Common Table Expressions)
+
+ 
 ![Image](https://github.com/user-attachments/assets/fbbe666d-7385-4fe7-a369-236d9c448d8a)
 ```
 1.
