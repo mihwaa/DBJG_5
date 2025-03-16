@@ -59,9 +59,44 @@ NOT IN은 <>ALL의 엘리아스이다, 하지만 NULL이 포함된 경우 차이
 NOT IN은 앞서 서술했듯 서브쿼리 값에 NULL이 있으면 NULL이 결과값이 된다.
  
  ## 15.2.15.6. Subqueries with EXISTS or NOT EXISTS
- ## 15.2.15.10. Subquery Errors
- ## 15.2.20 WITH (Common Table Expressions)
+ EXIST 
+ - 서브쿼리가 하나 이상의 행을 반환하면 TRUE
+ - 서브쿼리가 비어 있으면 FALSE
+즉, 테이블에 행이 존재하는지 확인하는 기능을 한다.
 
+NOT EXIST는 이 목록에 존재하지 않음 -> 다른 모든 곳에 존재함에서 활용가능하다.
+
+ ## 15.2.15.10. Subquery Errors
+오류 1. MYSQL에서는 서브쿼리 내에 LIMIT을 사용하여 IN, ALL, ANY, SOME으로 비교할 수 없다.  
+ 예시 코드는 다음과 같다.  
+ ```
+SELECT * FROM t1 WHERE s1 IN (SELECT s2 FROM t2 ORDER BY s1 LIMIT 1);
+```
+오류 2. 서브쿼리가 여러 개의 컬럼을 반환하면 오류가 발생한다. 
+- 다중 칼럼을 반환하려면 ROW SUBQUERY를 사용한다.  
+오류 3. 예상보다 많은 행을 반환하면 오류가 발생한다.
+- ANY, IN, LIMIT 1을 활용한다.  
+오류 4. 서브쿼리에서 업데이트나  삭제를 실행할 수 없다.
+- WITH를 사용하여 해결한다.
+- 
+ ## 15.2.20 WITH (Common Table Expressions)
+ CTE는 하나의 SQL문에서 여러 번 참조할 수 있느 임시테이블이다.  
+ CTE를 정의하기 위해 WITH 절을 사용한다.  
+ ```
+WITH
+  cte1 AS (SELECT a, b FROM table1),
+  cte2 AS (SELECT c, d FROM table2)
+SELECT b, d FROM cte1 JOIN cte2
+WHERE cte1.a = cte2.c;
+
+```
+
+```
+WITH [RECURSIVE]
+    cte_name [(col_name [, col_name] ...)] AS (subquery)
+    [, cte_name [(col_name [, col_name] ...)] AS (subquery)] ...
+
+```
  
 ![Image](https://github.com/user-attachments/assets/fbbe666d-7385-4fe7-a369-236d9c448d8a)
 ```
