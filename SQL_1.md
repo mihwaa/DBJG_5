@@ -99,3 +99,28 @@ VAR_SAMP()	표본 분산
 ```
 위 기능들은 집계함수이지만 윈도우함수처럼 활용할 수 있다. 
 
+
+## 문제풀이
+
+1번
+```
+SELECT score,
+DENSE_RANK() OVER(ORDER BY score DESC) AS 'rank'
+FROM Scores
+ORDER BY 'rank';
+```
+윈도우 함수 처음 써봤는데 하필 컬럼 이름이 rank여서 헷갈렸다.
+
+2번
+```
+select * FROM(
+  SELECT
+    DATE(measured_at) AS today,
+    DATE(LEAD(measured_at) OVER (ORDER BY DATE(measured_at))) AS next_day,
+    pm10,
+    LEAD(pm10) OVER (ORDER BY DATE(measured_at)) AS next_pm10
+  FROM measurements) T  
+where next_pm10 > pm10
+```
+레벨 2가 맞나? 어려웠다...
+일단 서브쿼리 안에 있는 select절을 만드는 거 까지는 어떻게 했는데 그렇게 하니까 where절이 작동하지 않았다. where절을 사용하기 위해 서브쿼리 안에 넣어주었더니 성공했다.
