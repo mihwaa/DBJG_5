@@ -124,3 +124,29 @@ where next_pm10 > pm10
 ```
 레벨 2가 맞나? 어려웠다...
 일단 서브쿼리 안에 있는 select절을 만드는 거 까지는 어떻게 했는데 그렇게 하니까 where절이 작동하지 않았다. where절을 사용하기 위해 서브쿼리 안에 넣어주었더니 성공했다.
+
+
+3번
+```
+WITH top_member AS (
+  SELECT MEMBER_ID
+  FROM (
+    SELECT MEMBER_ID,
+           RANK() OVER (ORDER BY COUNT(*) DESC) AS rnk
+    FROM REST_REVIEW
+    GROUP BY MEMBER_ID
+  ) AS ranked
+  WHERE rnk = 1
+)
+SELECT 
+  M.MEMBER_NAME,
+  R.REVIEW_TEXT,
+  DATE_FORMAT(R.REVIEW_DATE, '%Y-%m-%d') AS DATE
+FROM MEMBER_PROFILE M
+JOIN REST_REVIEW R ON M.MEMBER_ID = R.MEMBER_ID
+WHERE M.MEMBER_ID IN (SELECT MEMBER_ID FROM top_member)
+ORDER BY DATE, REVIEW_TEXT;
+```
+
+WITH 구문에서 윈도우 함수를 활용하며 리뷰 작성수가 가장 많은 사람들을 찾아내고
+밑에서 멤버 아이디가 동일한 사람을 찾는다... 나중에 다시 풀어봐야 할듯
