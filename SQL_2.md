@@ -36,6 +36,27 @@ name이 기본키라 address가 종속되거나, any_value를 활용하면 오�
 표현식이 SELECT 목록에 있는 항목과 동일함
 표현식에 포함된 모든 열이 SELECT 목록에도 존재함
 
+
+## having
+​HAVING 절은 GROUP BY 절로 그룹화된 결과에 조건을 적용할 때 사용된다.  
+where절과의 차이점: WHERE 절은 그룹화되기 전에 각 행에 조건을 적용하는 반면, HAVING 절은 그룹화된 후의 결과에 조건 적용
+WHERE 절은 SELECT 목록에 있는 열들에 조건을 지정할 수는 있어도 **집계 함수(aggregate function)**에는 조건을 걸 수 없음. 
+
+HAVING 절이 **모호한 열(column)**을 참조할 경우, 경고가 발생한다.  
+```
+SELECT COUNT(col1) AS col2 FROM t GROUP BY col2 HAVING col2 = 2;
+```
+HAVING 절에서 참조한 열 이름이 GROUP BY 절에도 있고 SELECT 절의 별칭으로도 사용된 경우, GROUP BY 절의 열로 해석된다.  
+
+```
+WHERE 절에 들어가야 할 항목을 HAVING 절에 사용하면 안된다.
+나쁜예시) SELECT col_name FROM tbl_name HAVING col_name > 0;
+
+HAVING 절은 집계 함수에 조건을 걸 수 있는 반면, WHERE 절은 집계 함수에 조건을 걸 수 없습니다.
+SELECT user, MAX(salary) FROM users
+  GROUP BY user HAVING MAX(salary) > 10;
+```
+
 1번
 ```
 SELECT 
